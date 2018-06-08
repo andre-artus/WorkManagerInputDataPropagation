@@ -12,6 +12,7 @@ class StartWorker : Worker() {
     override fun doWork(): WorkerResult {
         val startTime = Instant.now().toString()
         outputData = mapOf(
+            KEY_WORKER_NAME to this.javaClass.simpleName,
             KEY_SYNC_START_TIME to startTime)
             .toWorkData()
 
@@ -28,7 +29,7 @@ open class BaseWorker : Worker() {
         val mapOf = mapOf(
             KEY_WORKER_NAME to this.javaClass.simpleName)
 
-        val map = mapOf + inputData.keyValueMap
+        val map = inputData.keyValueMap + mapOf
 
         outputData = map.toWorkData()
 
@@ -43,21 +44,18 @@ class Worker2 : BaseWorker()
 class Worker3 : BaseWorker()
 class Worker4 : BaseWorker()
 class Worker5 : BaseWorker()
-class Worker6 : BaseWorker() {
-    override fun doWork(): WorkerResult {
-        outputData = inputData
-        return super.doWork()
-
-    }
-}
+class Worker6 : BaseWorker()
 
 class Worker7 : BaseWorker() {
     override fun doWork(): WorkerResult {
-        outputData = inputData
+//        outputData = inputData
+
+        val workerResult = super.doWork()
         outputData = mapOf(
-            KEY_WORKER_NAME to this.javaClass.simpleName)
+            KEY_WORKER_NAME to "Overwrite 7")
             .toWorkData()
-        return super.doWork()
+
+        return workerResult
     }
 }
 
@@ -65,6 +63,7 @@ class FinishWorker : Worker() {
     override fun doWork(): WorkerResult {
         val startTime = inputData.getString(KEY_SYNC_START_TIME, "")
         outputData = mapOf(
+            KEY_SYNC_START_TIME to startTime,
             KEY_WORKER_NAME to this.javaClass.simpleName)
             .toWorkData()
         // startTime == ""
