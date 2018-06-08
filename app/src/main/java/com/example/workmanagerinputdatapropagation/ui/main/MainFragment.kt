@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,8 +31,12 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val localAdapter = SyncListAdapter()
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         binding.model = viewModel
+        binding.list.adapter = localAdapter
+        binding.list.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        viewModel.status?.observe(this, Observer(localAdapter::submitList))
         viewModel.inProgress.observe(this, Observer {
             it?.let {
                 binding.inProgress = it
